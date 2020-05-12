@@ -1,20 +1,17 @@
 | Supported Targets | ESP32 |
 | ----------------- | ----- |
 
-# ADC1 Example
+# ZochoTen Smart Sensor
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
-
-This example shows how to configure ADC1 and read the voltage connected to GPIO pin.
-
-## How to use example
+This is a part of a final year project. The piece of software you are viewing is written in freeRTOS style with the ESP-IDF framework, provided by the manufactor of the ESP32. To learn more about ESP-IDF, please refer to the documentation at: 
+https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/index.html
 
 ### Hardware Required
 
 * A development board with ESP32 SoC (e.g., ESP32-DevKitC, ESP-WROVER-KIT, etc.)
 * A USB cable for power supply and programming
 
-In this example, we use `ADC_UNIT_1` by default, we need to connect a voltage source (0 ~ 3.3v) to GPIO34. If another ADC unit is selected in your application, you need to change the GPIO pin (please refer to Chapter 4.11 of the `ESP32 Technical Reference Manual`).
+The capacitor moisture sensor is connected to `ADC_UNIT_1`, the Vin of ESP32 is connected to VCC of the moisture sensor, and of course GND to GND. They are powered by the 5V microUSB cable. 
 
 ### Configure the project
 
@@ -32,24 +29,7 @@ idf.py -p PORT flash monitor
 
 (To exit the serial monitor, type ``Ctrl-]``.)
 
-See the Getting Started Guide for full steps to configure and use ESP-IDF to build projects.
 
-## Example Output
 
-Running this example, you will see the following log output on the serial monitor:
 
-```
-Raw: 486	Voltage: 189mV
-Raw: 435	Voltage: 177mV
-Raw: 225	Voltage: 128mV
-Raw: 18	    Voltage: 79mV
-```
 
-## Troubleshooting
-
-* program upload failure
-
-    * Hardware connection is not correct: run `idf.py -p PORT monitor`, and reboot your board to see if there are any output logs.
-    * The baud rate for downloading is too high: lower your baud rate in the `menuconfig` menu, and try again.
-
-For any technical queries, please open an [issue](https://github.com/espressif/esp-idf/issues) on GitHub. We will get back to you soon.
