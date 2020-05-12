@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+/Users/juuisle/esp/zocho-ten_sensor/build/CMakeFiles/bootloader
+/Users/juuisle/esp/zocho-ten_sensor/build/CMakeFiles/bootloader.rule
+/Users/juuisle/esp/zocho-ten_sensor/build/CMakeFiles/bootloader-complete.rule
+/Users/juuisle/esp/zocho-ten_sensor/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/Users/juuisle/esp/zocho-ten_sensor/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/Users/juuisle/esp/zocho-ten_sensor/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/Users/juuisle/esp/zocho-ten_sensor/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
+/Users/juuisle/esp/zocho-ten_sensor/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/Users/juuisle/esp/zocho-ten_sensor/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/Users/juuisle/esp/zocho-ten_sensor/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
