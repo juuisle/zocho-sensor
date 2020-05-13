@@ -48,84 +48,84 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 struct MQTTMessage
 {
-    char *mqTopic;
-    char *mqPayload;
+  char *mqTopic;
+  char *mqPayload;
 } xMessage;
 
 QueueHandle_t xQueue_mqtt;
 
 static void mqtt_publish_task(void *pvParameters)
 {
-    mqtt_init();
-    vTaskDelay(pdMS_TO_TICKS(1000));
+  mqtt_init();
+  vTaskDelay(pdMS_TO_TICKS(1000));
 
-    struct MQTTMessage *mqRxedMessage;
+  struct MQTTMessage *mqRxedMessage;
 
-    while (1)
+  while (1)
+  {
+    if (xQueue_mqtt != 0)
     {
-        if (xQueue_mqtt != 0)
-        {
-            /* Receive a message on the created queue.  Block for 10 ticks if a
+      /* Receive a message on the created queue.  Block for 10 ticks if a
          * message is not immediately available. */
-            if (xQueueReceive(xQueue_mqtt, &(mqRxedMessage), (TickType_t)10 == pdPASS))
-            {
-                /* Publish data to the MQTT Broker */
-                mqtt_pub(mqRxedMessage->mqTopic, mqRxedMessage->mqPayload, 1);
-                vTaskDelay(pdMS_TO_TICKS(1000));
-            }
-        }
+      if (xQueueReceive(xQueue_mqtt, &(mqRxedMessage), (TickType_t)10 == pdPASS))
+      {
+        /* Publish data to the MQTT Broker */
+        mqtt_pub(mqRxedMessage->mqTopic, mqRxedMessage->mqPayload, 1);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+      }
     }
+  }
 }
 
 static void moisture_sensor_task(void *pvParameters)
 {
-    /* Configure ADC */
-    adc1_config_width(ADC_WIDTH_BIT_12);
-    adc1_config_channel_atten(ADC_CHANNEL_6, ADC_ATTEN_11db);
+  /* Configure ADC */
+  adc1_config_width(ADC_WIDTH_BIT_12);
+  adc1_config_channel_atten(ADC_CHANNEL_6, ADC_ATTEN_11db);
 
-    xQueue_mqtt = xQueueCreate(10, sizeof(struct MQTTMessage *));
-    if (xQueue_mqtt == 0)
-        printf("failed to create Q");
+  xQueue_mqtt = xQueueCreate(10, sizeof(struct MQTTMessage *));
+  if (xQueue_mqtt == 0)
+    printf("failed to create Q");
 
-    uint32_t adc_reading = 0;
-    char mqtt_message[10];
+  uint32_t adc_reading = 0;
+  char mqtt_message[10];
 
-    struct MQTTMessage *mqMessage;
-    mqMessage = &xMessage;
-    while (1)
+  struct MQTTMessage *mqMessage;
+  mqMessage = &xMessage;
+  while (1)
+  {
+    /* Multisampling */
+    for (int i = 0; i < NO_OF_SAMPLES; i++)
     {
-        /* Multisampling */
-        for (int i = 0; i < NO_OF_SAMPLES; i++)
-        {
-            adc_reading += adc1_get_raw((adc1_channel_t)ADC_CHANNEL_6);
-        }
-        adc_reading /= NO_OF_SAMPLES;
-        sprintf(mqtt_message, "%d", adc_reading);
-
-        mqMessage->mqTopic = "data/moisture";
-        mqMessage->mqPayload = mqtt_message;
-
-        xQueueSend(xQueue_mqtt, (void *)&mqMessage, (TickType_t)0);
-        vTaskDelay(pdMS_TO_TICKS(1000));
+      adc_reading += adc1_get_raw((adc1_channel_t)ADC_CHANNEL_6);
     }
+    adc_reading /= NO_OF_SAMPLES;
+    sprintf(mqtt_message, "%d", adc_reading);
+
+    mqMessage->mqTopic = "data/moisture";
+    mqMessage->mqPayload = mqtt_message;
+
+    xQueueSend(xQueue_mqtt, (void *)&mqMessage, (TickType_t)0);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+  }
 }
 
 void app_main(void)
 {
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
-    {
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        ESP_ERROR_CHECK(nvs_flash_init());
-    }
+  esp_err_t ret = nvs_flash_init();
+  if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
+  {
+    ESP_ERROR_CHECK(nvs_flash_erase());
+    ESP_ERROR_CHECK(nvs_flash_init());
+  }
 
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
+  ESP_ERROR_CHECK(esp_netif_init());
+  ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    wifi_connect();
+  wifi_connect();
 
-    /* Similar to vanilla freeRTOS xTaskCreate function, but can run multiple cores
+  /* Similar to vanilla freeRTOS xTaskCreate function, but can run multiple cores
     * tskNO_AFFINITY: tell the scheduler can run on any core that available. */
-    xTaskCreatePinnedToCore(moisture_sensor_task, "moisture-sensor", STACK_SIZE, NULL, (tskIDLE_PRIORITY + 5), NULL, 0);
-    xTaskCreatePinnedToCore(mqtt_publish_task, "mqtt-publish-task", STACK_SIZE, NULL, (tskIDLE_PRIORITY + 5), NULL, 1);
+  xTaskCreatePinnedToCore(moisture_sensor_task, "moisture-sensor", STACK_SIZE, NULL, (tskIDLE_PRIORITY + 5), NULL, 0);
+  xTaskCreatePinnedToCore(mqtt_publish_task, "mqtt-publish-task", STACK_SIZE, NULL, (tskIDLE_PRIORITY + 5), NULL, 1);
 }
