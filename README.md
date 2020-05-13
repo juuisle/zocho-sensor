@@ -23,7 +23,7 @@ idf.py menuconfig
 
 ### Configure in code
 
-Change wifi setting in 'wifi.c' and mqtt setting in 'mqtt.c', you can use my testing mqtt server: "mqtt://64.225.97.160:8883", well, I used port 8883, but don't worry, there is no username and password or TSL/SSL, you should change to topic.
+Change wifi setting in 'wifi.c' and mqtt setting in 'mqtt.c', you can use my testing mqtt server: "mqtt://64.225.97.160:8883", well, port 8883, but no worry, as there is no username and password or TSL/SSL. Please change to MQTT topic.
 
 ### Build and Flash
 
