@@ -1,9 +1,9 @@
 | Supported Targets | ESP32 |
 | ----------------- | ----- |
 
-# ZochoTen Smart Sensor
+# Zocho-Ten Smart Sensor
 
-This is a part of a final year project. The piece of software you are viewing is written in freeRTOS style with the ESP-IDF framework, provided by the manufactor of the ESP32. To learn more about ESP-IDF, please refer to the documentation at: 
+The piece of software you are viewing is written in "freeRTOS style" with the ESP-IDF framework, provided by the manufactor of the ESP32. To learn more about ESP-IDF, please refer to the documentation at: 
 https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/index.html
 
 ### Hardware Required
