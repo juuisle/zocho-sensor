@@ -19,6 +19,10 @@ The capacitor moisture sensor is connected to `ADC_UNIT_1`, the Vin of ESP32 is 
 idf.py menuconfig
 ```
 
+### Configure in code
+
+Change wifi setting in 'wifi.c' and mqtt setting in 'mqtt.c', you can use my testing mqtt server: "mqtt://64.225.97.160:8883", there is no username and password, you should change to topic.
+
 ### Build and Flash
 
 Build the project and flash it to the board, then run monitor tool to view serial output:
