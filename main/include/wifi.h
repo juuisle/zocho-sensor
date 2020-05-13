@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 #ifndef __WIFI_H__
 #define __WIFI_H__
 
-void connect_to_wifi(void);
+void wifi_connect(void);
                  
 #endif
 
