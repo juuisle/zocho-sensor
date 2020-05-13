@@ -122,7 +122,7 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    connect_to_wifi();
+    wifi_connect();
 
     /* Similar to vanilla freeRTOS xTaskCreate function, but can run multiple cores
     * tskNO_AFFINITY: tell the scheduler can run on any core that available. */

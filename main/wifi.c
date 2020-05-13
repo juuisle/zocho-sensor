@@ -32,7 +32,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 #include "esp_log.h"
 #include "nvs_flash.h"
 
-
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
@@ -40,12 +39,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 static const char *TAG = "wifi";
 static int s_counter = 0;
-// Change value here
-#define ESP_WIFI_SSID CONFIG_ESP_WIFI_SSID 
+
+/* Change value here */
+#define ESP_WIFI_SSID CONFIG_ESP_WIFI_SSID
 #define ESP_WIFI_PASS CONFIG_ESP_WIFI_PASSWORD
 #define ESP_MAXIMUM_RETRY CONFIG_ESP_MAXIMUM_RETRY
 
-// FreeRTOS event group to signal when we are connected 
+/* FreeRTOS event group to signal when we are connected */
 static EventGroupHandle_t s_wifi_event_group;
 const int WIFI_CONNECTED_BIT = BIT0;
 const int WIFI_FAIL_BIT = BIT1;
@@ -54,49 +54,52 @@ static void signal_wifi_fail()
 {
     while (1)
     {
-       blynk_once();
+        blynk_once();
     }
 }
 
-static void wifi_event_handler(void* arg, esp_event_base_t event_base,
-                                int32_t event_id, void* event_data)
+static void wifi_event_handler(void *arg, esp_event_base_t event_base,
+                               int32_t event_id, void *event_data)
 {
-    if (event_id == WIFI_EVENT_STA_START) {
+    if (event_id == WIFI_EVENT_STA_START)
+    {
         esp_wifi_connect();
-    } else if (event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        if (s_counter < ESP_MAXIMUM_RETRY) {
+    }
+    else if (event_id == WIFI_EVENT_STA_DISCONNECTED)
+    {
+        if (s_counter < ESP_MAXIMUM_RETRY)
+        {
             esp_wifi_connect();
             s_counter++;
             ESP_LOGI(TAG, "retry to connect to the AP");
-        } else {
+        }
+        else
+        {
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
             signal_wifi_fail();
         }
-        ESP_LOGI(TAG,"fail to connect to the AP");
-        
-    } 
+        ESP_LOGI(TAG, "fail to connect to the AP");
+    }
 }
 
-static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
-                           int32_t event_id, void* event_data)
+static void got_ip_event_handler(void *arg, esp_event_base_t event_base,
+                                 int32_t event_id, void *event_data)
 {
-  s_counter = 0;
-  ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
-  ESP_LOGI(TAG, "connected with IP:" IPSTR, IP2STR(&event->ip_info.ip));
-  xEventGroupClearBits(s_wifi_event_group, WIFI_FAIL_BIT);
-  xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+    s_counter = 0;
+    ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
+    ESP_LOGI(TAG, "connected with IP:" IPSTR, IP2STR(&event->ip_info.ip));
+    xEventGroupClearBits(s_wifi_event_group, WIFI_FAIL_BIT);
+    xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
 }
 
-
-void connect_to_wifi(void)
-{ 
+void wifi_connect(void)
+{
     s_wifi_event_group = xEventGroupCreate();
 
     esp_netif_create_default_wifi_sta();
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-
 
     ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
                                                         ESP_EVENT_ANY_ID,
@@ -112,27 +115,30 @@ void connect_to_wifi(void)
     wifi_config_t wifi_config = {
         .sta = {
             .ssid = ESP_WIFI_SSID,
-            .password = ESP_WIFI_PASS
-        },
+            .password = ESP_WIFI_PASS},
     };
-    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
-    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
-    ESP_ERROR_CHECK(esp_wifi_start() );
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_start());
 
     /* Waiting until either the connection is established or failed
      * The bits are set by event_handler() */
     EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
-            WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
-            pdFALSE,
-            pdFALSE,
-            portMAX_DELAY);
+                                           WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
+                                           pdFALSE,
+                                           pdFALSE,
+                                           portMAX_DELAY);
 
-    if (bits & WIFI_CONNECTED_BIT) {
+    if (bits & WIFI_CONNECTED_BIT)
+    {
         ESP_LOGI(TAG, "connected to ap SSID:%s", ESP_WIFI_SSID);
-    } else if (bits & WIFI_FAIL_BIT) {
+    }
+    else if (bits & WIFI_FAIL_BIT)
+    {
         ESP_LOGI(TAG, "Failed to connect to SSID:%s", ESP_WIFI_SSID);
-    } else {
+    }
+    else
+    {
         ESP_LOGE(TAG, "UNEXPECTED EVENT");
     }
-
 }
