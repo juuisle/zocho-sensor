@@ -41,9 +41,9 @@ static const char *TAG = "wifi";
 static int s_counter = 0;
 
 /* Change value here */
-#define ESP_WIFI_SSID CONFIG_ESP_WIFI_SSID
-#define ESP_WIFI_PASS CONFIG_ESP_WIFI_PASSWORD
-#define ESP_MAXIMUM_RETRY CONFIG_ESP_MAXIMUM_RETRY
+#define ESP_WIFI_SSID "LienTamWLAN"
+#define ESP_WIFI_PASS "sanhtusudai"
+#define ESP_MAXIMUM_RETRY 28
 
 /* FreeRTOS event group to signal when we are connected */
 static EventGroupHandle_t s_wifi_event_group;

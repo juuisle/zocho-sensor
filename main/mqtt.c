@@ -41,8 +41,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 static const char *TAG = "MQTT";
 
-// Change value here
-#define BROKER_URL CONFIG_BROKER_URL
+/* Change value here */
+#define BROKER_URL "mqtt://64.225.97.160:8883"
 static esp_mqtt_client_handle_t client;
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
