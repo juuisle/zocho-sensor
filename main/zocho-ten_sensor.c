@@ -39,8 +39,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 #include "lwip/sys.h"
 #include "esp_adc_cal.h"
 
-#include "wifi.h"
-#include "mqtt.h"
+#include "zocho_wifi.h"
+#include "zocho_mqtt.h"
+#include "zocho_gpio.h"
+
 
 /* Change these infomation if needed */
 #define NO_OF_SAMPLES 64
@@ -56,7 +58,7 @@ QueueHandle_t xQueue_mqtt;
 
 static void mqtt_publish_task(void *pvParameters)
 {
-  mqtt_init();
+  zocho_mqtt_init();
   vTaskDelay(pdMS_TO_TICKS(1000));
 
   struct MQTTMessage *mqRxedMessage;
@@ -70,7 +72,7 @@ static void mqtt_publish_task(void *pvParameters)
       if (xQueueReceive(xQueue_mqtt, &(mqRxedMessage), (TickType_t)10 == pdPASS))
       {
         /* Publish data to the MQTT Broker */
-        mqtt_pub(mqRxedMessage->mqTopic, mqRxedMessage->mqPayload, 1);
+        zocho_mqtt_publish(mqRxedMessage->mqTopic, mqRxedMessage->mqPayload, 1);
         vTaskDelay(pdMS_TO_TICKS(1000));
       }
     }
@@ -122,10 +124,10 @@ void app_main(void)
   ESP_ERROR_CHECK(esp_netif_init());
   ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-  wifi_connect();
+  zocho_gpio_init();
+  zocho_wifi_init();
 
-  /* Similar to vanilla freeRTOS xTaskCreate function, but can run multiple cores
-    * tskNO_AFFINITY: tell the scheduler can run on any core that available. */
+  /* Similar to vanilla freeRTOS xTaskCreate function, but can run multi threads - with 2 CPU cores */
   xTaskCreatePinnedToCore(moisture_sensor_task, "moisture-sensor", STACK_SIZE, NULL, (tskIDLE_PRIORITY + 5), NULL, 0);
   xTaskCreatePinnedToCore(mqtt_publish_task, "mqtt-publish-task", STACK_SIZE, NULL, (tskIDLE_PRIORITY + 5), NULL, 1);
 }

@@ -21,9 +21,30 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---------------------------------------------------------------------------------------------------*/
 
-#ifndef __BLINK_H__
-#define __BLINK_H__
+#ifndef __ZOCHO_MQTT_H__
+#define __ZOCHO_MQTT_H__
 
-void blynk_once(void);
-                 
+#include "mqtt_client.h"
+
+/*@brief initilize MQTT setting for zocho-ten
+* @param client
+* @usage: call zocho_mqtt_init() in main()*/
+void zocho_mqtt_init();
+
+/*@brief publish message to MQTT broker 
+* @param client 
+* @param topic: MQTT topic
+* @param payload: message payload
+* @param qos: MQTT qos 
+* @return true if publish successfully */
+int zocho_mqtt_publish(const char* topic, const char* payload, const int qos);
+
+/*@brief publish message to MQTT broker 
+* @param client
+* @param topic: MQTT topic
+* @param qos: MQTT qos 
+* @return true if publish successfully */
+int zocho_mqtt_subscribe(const char* topic, const int qos);
+
 #endif
+

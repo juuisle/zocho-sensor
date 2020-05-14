@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 ---------------------------------------------------------------------------------------------------*/
 
 #include <string.h>
-#include "wifi.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
@@ -35,7 +34,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-#include "blink.h"
+#include "zocho_wifi.h"
+#include "zocho_gpio.h"
 
 static const char *TAG = "wifi";
 static int s_counter = 0;
@@ -54,7 +54,7 @@ static void signal_wifi_fail()
 {
   while (1)
   {
-    blynk_once();
+    zocho_on_board_led_blink_once();
   }
 }
 
@@ -92,7 +92,7 @@ static void got_ip_event_handler(void *arg, esp_event_base_t event_base,
   xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
 }
 
-void wifi_connect(void)
+void zocho_wifi_init(void)
 {
   s_wifi_event_group = xEventGroupCreate();
 
@@ -122,7 +122,7 @@ void wifi_connect(void)
   ESP_ERROR_CHECK(esp_wifi_start());
 
   /* Waiting until either the connection is established or failed
-     * The bits are set by event_handler() */
+     * The bits are set by wifi_event_handler() */
   EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
                                          WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
                                          pdFALSE,

@@ -21,10 +21,21 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ---------------------------------------------------------------------------------------------------*/
 
-#ifndef __WIFI_H__
-#define __WIFI_H__
+#ifndef __ZOCHO_GPIO_H__
+#define __ZOCHO_GPIO_H__
 
-void wifi_connect(void);
-                 
+
+/*@brief initilize GPIO Pin
+* @usage: call zocho_gpio_init() in main()*/
+void zocho_gpio_init(void);
+
+/* @brief blink the onbard LED once */
+void zocho_on_board_led_blink_once(void);
+
+/* @brief turn on the onbard LED */
+void zocho_on_board_led_on(void);
+
+/* @brief turn off the onbard LED */
+void zocho_on_board_led_off(void);
+
 #endif
-
