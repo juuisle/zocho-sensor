@@ -3,7 +3,7 @@
 
 # Zocho-Ten Smart Sensor
 
-The piece of software you are viewing is written in "freeRTOS style" with the ESP-IDF framework, provided by the manufactor of the ESP32. To learn more about ESP-IDF, please refer to the documentation at: 
+This software is powerd bythe ESP-IDF FreeRTOS framework. To learn more about ESP-IDF, please refer to the documentation at: 
 https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/index.html
 
 ### Hardware Required
@@ -13,7 +13,6 @@ https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/index.
 
 The capacitor moisture sensor is connected to `ADC_CHANNEL_6` of ESP32,  Vin of ESP32 is connected to VCC of the moisture sensor, and of course GND to GND. Please check the techical sheet of the board. ESP32 are powered by the 5V microUSB cable.
 
-Alternatively, for tesing purpose, there is no need to connect to real sensor, ESP32 has the built-in one. 
 
 ### Configure the project
 
